@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifra App</title>
+    <style>
+                /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* Step Containers */
+        .step {
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Textarea Styles */
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            min-height: 150px;
+            resize: vertical;
+            transition: border 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Cipher Selection Buttons */
+        #step2 button {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        /* Key Input Styles */
+        #keyInput input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #keyInput input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Matrix Input Styles */
+        #matrixInput {
+            margin-bottom: 1.5rem;
+        }
+
+        #matrixInput h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        #matrixInput input {
+            width: 80px;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 0.5rem;
+            text-align: center;
+        }
+
+        #matrixInput input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Result Section */
+        #result {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        #resultado {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            word-wrap: break-word;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #app {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            #matrixInput input {
+                width: 60px;
+            }
+        }
+
+        /* Animation for step transitions */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step:not(.hidden) {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Cifra App</h1>
+        <div id="step1" class="step">
+            <h2>Passo 1: Digite o texto claro</h2>
+            <textarea id="texto" placeholder="Enter your text here"></textarea>
+            <div class="button-group">
+                <button onclick="goToStep(2)">Próximo</button>
+            </div>
+        </div>
+        
+        <div id="step2" class="step hidden">
+            <h2>Passo 2: Escolha a cifra</h2>
+            <div class="cipher-options">
+                <button onclick="selectCipher('cesar')">César</button>
+                <button onclick="selectCipher('hill')">Hill</button>
+                <button onclick="selectCipher('vigenere')">Vigenère</button>
+            </div>
+        </div>
+        
+        <div id="step3" class="step hidden">
+            <h2>Passo 3: Digite a chave</h2>
+            <div id="keyInput">
+                <input type="text" id="chave" placeholder="Enter the key">
+            </div>
+            
+            <div id="matrixInput" class="hidden">
+                <h3>Preencha a matriz de Hill</h3>
+                <div class="matrix-row">
+                    <input type="number" id="m00" placeholder="M[0][0]">
+                    <input type="number" id="m01" placeholder="M[0][1]">
+                </div>
+                <div class="matrix-row">
+                    <input type="number" id="m10" placeholder="M[1][0]">
+                    <input type="number" id="m11" placeholder="M[1][1]">
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button onclick="cifrar()">Cifrar</button>
+                <button onclick="decifrar()">Decifrar</button>
+            </div>
+        </div>
+        
+        <div id="result" class="hidden">
+            <h2>Texto Cifrado</h2>
+            <p id="resultado"></p>
+            <button onclick="reset()">Recomeçar</button>
+        </div>
+    </div>
+    <script src="js/scripts.js"></script>
+</body>
+</html>
