@@ -13,6 +13,10 @@ public class CifraHill implements Cifra {
 
     @Override
     public String cifrar(String texto) {
+          int determinante = calcularDeterminante(chave);
+        if (determinante == 0) {
+            return "Erro: O determinante da matriz é 0. Escolha uma matriz válida.";
+        }
         texto = Normalizer.normalize(texto, Normalizer.Form.NFD)
                           .replaceAll("[^a-zA-Z]", "")
                           .toUpperCase();
